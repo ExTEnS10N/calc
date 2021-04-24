@@ -67,9 +67,12 @@ let historyList = [];
   const his = localStorage.getItem('history');
   if (his == null) { return; }
   historyList = JSON.parse(his);
+  if (historyList.length === 0) { return; }
+  const fragment = document.createDocumentFragment();
   for (let history of historyList) {
-    historyEl.appendChild(createRow(history.exp, history.result));
+    fragment.appendChild(createRow(history.exp, history.result));
   }
+  historyEl.appendChild(fragment);
 })()
 
 /**
