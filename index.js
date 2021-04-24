@@ -60,6 +60,17 @@ currentExpObserver.observe(currentExp, { characterData: true, childList: true })
 
 /** @type {string[]} */
 let exp = [];
+/** @type {{exp: string, result: string}[]} */
+let historyList = [];
+
+(() => {
+  const his = localStorage.getItem('history');
+  if (his == null) { return; }
+  historyList = JSON.parse(his);
+  for (let history of historyList) {
+    historyEl.appendChild(createRow(history.exp, history.result));
+  }
+})()
 
 /**
  * @param {string} char 
@@ -68,6 +79,8 @@ function input(char) {
   switch (char) {
     case 'AC':
       historyEl.innerHTML = '';
+      historyList = [];
+      localStorage.setItem('history', JSON.stringify(historyList));
     case 'C':
       currentExp.innerHTML = '';
       currentRes.innerHTML = '';
@@ -92,6 +105,8 @@ function input(char) {
       currentRes.classList.remove('estimate');
       if (!res.startsWith(ERROR)) {
         currentRes.classList.remove('error');
+        historyList.push({ exp: currentExp.textContent, result: currentRes.textContent });
+        localStorage.setItem('history', JSON.stringify(historyList));
         historyEl.appendChild(createRow(currentExp.textContent, currentRes.textContent));
         input('C');
       }
