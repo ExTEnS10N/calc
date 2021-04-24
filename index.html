@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta name="viewport"
+    content="width=device-width, height=device-height, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <title>Calc</title>
+  <link rel="stylesheet" href="./index.css">
+</head>
+
+<body>
+  <div class="container">
+    <div class="screen">
+      <div class="history-scroll">
+        <div style="flex: 1"></div>
+        <div id="history"></div>
+      </div>
+      <div id="current" class="calc-row empty">
+        <div class="expression"></div>
+        <div class="result"></div>
+      </div>
+    </div>
+    <table class="keyboard">
+      <tbody>
+        <tr>
+          <td id="btn-clear" style="color: var(--color-blue);">AC</td>
+          <td style="font-size: .8em;">⌫</td>
+          <td>÷</td>
+          <td>×</td>
+        </tr>
+        <tr>
+          <td>7</td>
+          <td>8</td>
+          <td>9</td>
+          <td>−</td>
+        </tr>
+        <tr>
+          <td>4</td>
+          <td>5</td>
+          <td>6</td>
+          <td>+</td>
+        </tr>
+        <tr>
+          <td>1</td>
+          <td>2</td>
+          <td>3</td>
+          <td class="eq" rowspan="2">=</td>
+        </tr>
+        <tr>
+          <td>%</td>
+          <td>0</td>
+          <td class="decimal">.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <script src="./index.js"></script>
+</body>
+
+</html>
