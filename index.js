@@ -55,8 +55,8 @@ function scroll(top) {
   requestAnimationFrame(_scroll);
 }
 
-for (const button of buttons) {
-  button.addEventListener('click', function () {
+for (let i = 0; i < buttons.length; ++i) {
+  buttons[i].addEventListener('click', function () {
     input(this.textContent);
   })
 }
@@ -371,7 +371,7 @@ function divide(left, right, estimate) {
         let res = 0;
         let substractor = divisor;
         while (compare(substractor, r) >= 0) {
-          substractor = substract(substractor, r.slice());
+          substractor = substract(substractor, r.slice(), estimate);
           res++;
         }
         result.push(res + '');
@@ -403,7 +403,7 @@ function divide(left, right, estimate) {
     if (fractionLength > maxFractionLength) {
       const last = result.pop();
       if (Number(last) >= 5) {
-        result = plus(result, ['0', Seperator.decimal, ...new Array(20).fill('0'), '1']);
+        result = plus(result, ['0', Seperator.decimal, ...new Array(20).fill('0'), '1'], estimate);
       }
     }
   }
@@ -435,7 +435,7 @@ function isZero(arr) {
 function multiply(left, right, estimate) {
   if (right == null || right === Operator.MINUS + undefined) {
     if (estimate) { right = '0'; }
-    else { return ERROR + '请输入*右侧的数字'; }
+    else { return ERROR + `请输入${Operator.MULTIPLY}右侧的数字`; }
   }
 
   let l = (left instanceof Array) ? left : left.split('');
@@ -495,7 +495,7 @@ function multiply(left, right, estimate) {
   }
   result.push(products.shift());
   while (products.length > 0) {
-    result.push(plus(result.pop(), products.shift()));
+    result.push(plus(result.pop(), products.shift(), estimate));
   }
   result.push(...result.pop());
   if (fractionLength > 0) {
@@ -526,7 +526,7 @@ function substract(left, right, estimate) {
   const isRightNegative = r[0] === Operator.MINUS;
   if (isLeftNegative) {
     if (!isRightNegative) { r.unshift(Operator.MINUS); }
-    return add(l, r, estimate);
+    return plus(l, r, estimate);
   }
   let hasSwap = false;
   let compareRes = compare(l, r)
@@ -604,7 +604,7 @@ function plus(left, right, estimate) {
   const isLeftNegative = l[0] === Operator.MINUS;
   const isRightNegative = r[0] === Operator.MINUS;
   if (isLeftNegative && !isRightNegative) {
-    return substract(right, left);
+    return substract(right, left, estimate);
   }
   if (isLeftNegative) { l.shift(); }
   if (isRightNegative) { r.shift(); }
@@ -627,7 +627,7 @@ function plus(left, right, estimate) {
     result.unshift(carry + '');
   }
   if (isLeftNegative && isRightNegative) {
-    result.unshift(Seperator.MINUS);
+    result.unshift(Operator.MINUS);
   }
   trimZero(result);
   return (left instanceof Array) ? result : result.join('');
