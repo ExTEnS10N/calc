@@ -33,26 +33,41 @@ function isOperator(op) {
   return op === Operator.ADD || op === Operator.MINUS || op === Operator.MULTIPLY || op === Operator.DIVIDE
 }
 
+function easeInOutQuad(currentTime, startValue, changeValue, duration) {
+  currentTime /= duration / 2;
+  if (currentTime < 1) return changeValue / 2 * currentTime * currentTime + startValue;
+  currentTime--;
+  return -changeValue / 2 * (currentTime * (currentTime - 2) - 1) + startValue;
+}
+
+function scroll(top) {
+  const start = scrollView.scrollTop;
+  const length = top - start;
+  const startTime = new Date().getTime();
+  const _scroll = () => {
+    const now = new Date().getTime() - startTime;
+    const newTop = easeInOutQuad(now, start, length, 250);
+    scrollView.scrollTop = newTop;
+    if (now < 250) {
+      requestAnimationFrame(_scroll);
+    }
+  }
+  requestAnimationFrame(_scroll);
+}
+
 for (const button of buttons) {
   button.addEventListener('click', function () {
     input(this.textContent);
   })
 }
 const currentExpObserver = new MutationObserver(() => {
-  if (currentExp.textContent.length === 0) {
+  if (currentExp.textContent.length === 0 && !currentEL.classList.contains('empty')) {
     currentEL.classList.add('empty');
   }
   else if (currentEL.classList.contains('empty')) {
-    if (scrollView.scrollHeight - scrollView.scrollTop === scrollView.clientHeight) {
-      window.requestAnimationFrame(() => {
-        scrollView.scroll({ top: scrollView.scrollHeight, behavior: 'smooth' });
-      })
-    }
-    else {
-      window.requestAnimationFrame(() => {
-        scrollView.scroll({ top: scrollView.scrollTop + currentEL.clientHeight, behavior: 'smooth' });
-      })
-    }
+    requestAnimationFrame(() => {
+      scroll(scrollView.scrollTop + currentEL.clientHeight);
+    })
     currentEL.classList.remove('empty');
   }
 });
@@ -73,6 +88,9 @@ let historyList = [];
     fragment.appendChild(createRow(history.exp, history.result));
   }
   historyEl.appendChild(fragment);
+  requestAnimationFrame(() => {
+    scrollView.scrollTop = scrollView.scrollHeight;
+  })
 })()
 
 /**
@@ -85,6 +103,7 @@ function input(char) {
       historyList = [];
       localStorage.setItem('history', JSON.stringify(historyList));
     case 'C':
+      scroll(scrollView.scrollTop - currentEL.clientHeight);
       currentExp.innerHTML = '';
       currentRes.innerHTML = '';
       clearBtn.textContent = 'AC';
@@ -116,9 +135,7 @@ function input(char) {
       else {
         currentRes.classList.add('error');
       }
-      window.requestAnimationFrame(() => {
-        scrollView.scroll({ top: scrollView.scrollHeight, behavior: 'smooth' });
-      })
+      scroll(scrollView.scrollHeight);
       break;
     case Operator.ADD: case Operator.MINUS: case Operator.MULTIPLY: case Operator.DIVIDE:
       addOperator(char);
