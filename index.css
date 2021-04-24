@@ -3,12 +3,12 @@
   --color-red: #da0f46;
 }
 @font-face {
-  font-family: 'Symbol';
+  font-family: 'CustomSymbol';
   src: local('Lucida Grande');
   unicode-range: U+232b, U+f7, U+d7, U+2212, U+2b, U+3d, U+25;
 }
 html{
-  font-family: "Symbol", "Source Code Pro", "PingFangSC", "Apple Symbols";
+  font-family: "CustomSymbol", "Source Code Pro", "PingFang SC", "Apple Symbols";
   font-size: 17px;
 }
 body{
@@ -24,6 +24,10 @@ body{
   position: relative;
   display: flex;
   flex-flow: column;
+  padding-top: constant(safe-area-inset-top);
+  padding-right: constant(safe-area-inset-right);
+  padding-bottom: constant(safe-area-inset-bottom);
+  padding-left: constant(safe-area-inset-left);
 }
 
 .screen{
@@ -80,6 +84,8 @@ body{
   color: #121212;
   font-weight: 500;
   font-size: 1.5em;
+  -webkit-user-select: none;
+  user-select: none;
 }
 .keyboard tr{
   min-height: 1em;
@@ -92,6 +98,7 @@ body{
   text-align: center;
   width: 25%;
   padding: 0;
+  cursor: pointer;
 }
 .keyboard td:hover{
   filter: brightness(.98);
@@ -101,7 +108,7 @@ body{
 }
 .keyboard td.eq{
   background-color: var(--color-blue);
-  border-color: var(--color-blue);
+  /* border-color: var(--color-blue); */
   color: #fff;
 }
 .keyboard td:first-child{
