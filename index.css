@@ -109,7 +109,7 @@ body{
 .keyboard tr{
   min-height: 1em;
   max-height: 100px;
-  height: calc(25vw - 1px);
+  height: calc(22vw - 1px);
 }
 .keyboard td{
   background-color: var(--color-bg-plain);
