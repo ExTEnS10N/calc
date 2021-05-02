@@ -1,6 +1,22 @@
 :root{
   --color-blue: #045ef5;
   --color-red: #da0f46;
+  --color-bg-plain: #fff;
+  --color-fg-plain: #121212;
+  --color-bg-gray: #fcfcfc;
+  --color-fg-gray: #545454;
+  --color-border: #efefef;
+  --color-border-light: #f5f5f5;
+}
+@media (prefers-color-scheme: dark) {
+  :root{
+    --color-bg-plain: #141414;
+    --color-fg-plain: #c0c0c0;
+    --color-bg-gray: #000;
+    --color-fg-gray: #bcbcbc;
+    --color-border: #212121;
+    --color-border-light: #1b1b1b;
+  }
 }
 @font-face {
   font-family: 'CustomSymbol';
@@ -17,6 +33,7 @@ body{
   height: 100vh;
   overflow: hidden;
   position: relative;
+  background-color: var(--color-bg-plain)
 }
 .container{
   width: 100%;
@@ -48,13 +65,13 @@ body{
   flex: 1;
 }
 #history{
-  background-color: #fcfcfc;
-  color: #545454;
+  background-color: var(--color-bg-gray);
+  color: var(--color-fg-gray);
 }
 .calc-row{
   display: flex;
   flex-flow: column;
-  border-top: 1px solid #efefef;
+  border-top: 1px solid var(--color-border);
   padding: 16px;
 }
 .calc-row.empty{
@@ -67,11 +84,11 @@ body{
 }
 .expression{
   padding: 0 0 16px 0;
-  
+  color: var(--color-fg-plain)
 }
 .result{
   padding: 16px 0 0 0;
-  border-top: 1px solid #f5f5f5;
+  border-top: 1px solid var(--color-border-light);
 }
 .result.estimate{
   color: #8b8b8b;
@@ -83,7 +100,7 @@ body{
 .keyboard{
   width: 100%;
   border-collapse: collapse;
-  color: #121212;
+  color: var(--color-fg-plain);
   font-weight: 500;
   font-size: 1.5em;
   -webkit-user-select: none;
@@ -95,8 +112,8 @@ body{
   height: calc(25vw - 1px);
 }
 .keyboard td{
-  background-color: #fff;
-  border: 1px solid #efefef;
+  background-color: var(--color-bg-plain);
+  border: 1px solid var(--color-border);
   text-align: center;
   width: 25%;
   padding: 0;
