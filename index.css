@@ -56,6 +56,10 @@ body{
   text-align: right;
   overflow-x: hidden;
   position: relative;
+  background-color: var(--color-bg-gray);
+}
+#current{
+  background-color: var(--color-bg-plain);
 }
 .history-scroll{
   display: flex;
