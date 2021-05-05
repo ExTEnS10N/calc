@@ -317,7 +317,7 @@ function divide(left, right, estimate) {
   }
 
   let l = (left instanceof Array) ? left : [...left];
-  let r = (right instanceof Array) ? right : [...right];
+  let r = (right instanceof Array) ? right : trimZero([...right]);
 
   let result = [];
   const isLeftNegative = l[0] === Operator.MINUS;
@@ -439,7 +439,7 @@ function multiply(left, right, estimate) {
   }
 
   let l = (left instanceof Array) ? left : [...left];
-  let r = (right instanceof Array) ? right : [...right];
+  let r = (right instanceof Array) ? right : trimZero([...right]);
 
   if (l.length === 1) {
     if (l[0] === '0') { return (left instanceof Array) ? ['0'] : '0' }
@@ -518,7 +518,7 @@ function substract(left, right, estimate) {
   }
   // return (Number(left) - Number(right)) + '';
   let l = (left instanceof Array) ? left : [...left];
-  let r = (right instanceof Array) ? right : [...right];
+  let r = (right instanceof Array) ? right : trimZero([...right]);
   fractionAlign(l, r);
 
   const result = [];
@@ -595,7 +595,7 @@ function plus(left, right, estimate) {
   }
   // return (Number(left) + Number(right)) + '';
   let l = (left instanceof Array) ? left : [...left];
-  let r = (right instanceof Array) ? right : [...right];
+  let r = (right instanceof Array) ? right : trimZero([...right]);
 
   fractionAlign(l, r);
 
