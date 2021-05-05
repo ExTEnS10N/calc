@@ -177,7 +177,7 @@ function getLastResult() {
 function addPercent() {
   let last = exp[exp.length - 1];
   if (isOperator(last)) { return; }
-  last = last.split('');
+  last = [...last];
   if (isZero(last)) { return; }
   let dot = last.indexOf(Seperator.decimal);
   if (dot >= 0) {
@@ -255,7 +255,7 @@ function formatNumber(num) {
 function calc(estimate = false) {
   const _exp = exp.slice();
   if (_exp[0] === Operator.MINUS) {
-    if (_exp.length === 1 || isZero(_exp[1].split(''))) {
+    if (_exp.length === 1 || isZero([..._exp[1]])) {
       return '0';
     }
     _exp[1] = Operator.MINUS + _exp[1];
@@ -316,8 +316,8 @@ function divide(left, right, estimate) {
     else { return ERROR + `请输入${Operator.DIVIDE}右侧的数字`; }
   }
 
-  let l = (left instanceof Array) ? left : left.split('');
-  let r = (right instanceof Array) ? right : right.split('');
+  let l = (left instanceof Array) ? left : [...left];
+  let r = (right instanceof Array) ? right : [...right];
 
   let result = [];
   const isLeftNegative = l[0] === Operator.MINUS;
@@ -438,8 +438,8 @@ function multiply(left, right, estimate) {
     else { return ERROR + `请输入${Operator.MULTIPLY}右侧的数字`; }
   }
 
-  let l = (left instanceof Array) ? left : left.split('');
-  let r = (right instanceof Array) ? right : right.split('');
+  let l = (left instanceof Array) ? left : [...left];
+  let r = (right instanceof Array) ? right : [...right];
 
   if (l.length === 1) {
     if (l[0] === '0') { return (left instanceof Array) ? ['0'] : '0' }
@@ -517,8 +517,8 @@ function substract(left, right, estimate) {
     else { return ERROR + '请输入-右侧的数字'; }
   }
   // return (Number(left) - Number(right)) + '';
-  let l = (left instanceof Array) ? left : left.split('');
-  let r = (right instanceof Array) ? right : right.split('');
+  let l = (left instanceof Array) ? left : [...left];
+  let r = (right instanceof Array) ? right : [...right];
   fractionAlign(l, r);
 
   const result = [];
@@ -594,8 +594,8 @@ function plus(left, right, estimate) {
     else { return ERROR + '请输入+右侧的数字'; }
   }
   // return (Number(left) + Number(right)) + '';
-  let l = (left instanceof Array) ? left : left.split('');
-  let r = (right instanceof Array) ? right : right.split('');
+  let l = (left instanceof Array) ? left : [...left];
+  let r = (right instanceof Array) ? right : [...right];
 
   fractionAlign(l, r);
 
@@ -621,7 +621,7 @@ function plus(left, right, estimate) {
     else {
       carry = 0;
     }
-    result.unshift(...(res + '').split(''));
+    result.unshift(...(res + ''));
   }
   if (carry !== 0) {
     result.unshift(carry + '');
