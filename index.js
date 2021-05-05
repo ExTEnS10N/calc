@@ -88,9 +88,9 @@ let historyList = [];
     fragment.appendChild(createRow(history.exp, history.result));
   }
   historyEl.appendChild(fragment);
-  requestAnimationFrame(() => {
+  setTimeout(() => {
     scrollView.scrollTop = scrollView.scrollHeight;
-  })
+  }, 100);
 })()
 
 /**
