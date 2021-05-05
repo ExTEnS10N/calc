@@ -123,9 +123,9 @@ function input(char) {
     case '=':
       if (!currentRes.classList.contains('estimate')) { break; }
       let res = calc();
-      currentRes.textContent = formatResult(res);
       currentRes.classList.remove('estimate');
       if (!res.startsWith(ERROR)) {
+        currentRes.textContent = formatResult(res);
         currentRes.classList.remove('error');
         historyList.push({ exp: currentExp.textContent, result: currentRes.textContent });
         localStorage.setItem('history', JSON.stringify(historyList));
@@ -133,6 +133,7 @@ function input(char) {
         input('C');
       }
       else {
+        currentRes.textContent = res;
         currentRes.classList.add('error');
       }
       scroll(scrollView.scrollHeight);
@@ -263,6 +264,9 @@ function calc(estimate = false) {
     }
     _exp[1] = Operator.MINUS + _exp[1];
     _exp.shift();
+  }
+  if (_exp.length === 1 && !isOperator(_exp[0])) {
+    return trimZero([..._exp[0]]).join('');
   }
   // 先乘除
   for (let i = 0; i < _exp.length; ++i) {
