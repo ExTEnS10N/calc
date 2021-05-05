@@ -105,7 +105,7 @@ function input(char) {
     case 'C':
       scroll(scrollView.scrollTop - currentEL.clientHeight);
       currentExp.innerHTML = '';
-      currentRes.innerHTML = '';
+      currentRes.innerHTML = '0';
       clearBtn.textContent = 'AC';
       exp = [];
       break;
@@ -171,13 +171,13 @@ function createRow(expression, result) {
 function getLastResult() {
   const resEl = document.querySelector('#history>.calc-row:last-child>.result');
   if (resEl == null) { return null; }
-  return resEl.textContent.substring(1);
+  return resEl.textContent.substring(1).replace(new RegExp(Seperator.group, 'g'), '');
 }
 
 function addPercent() {
   let last = exp[exp.length - 1];
   if (isOperator(last)) { return; }
-  last = last.split('').filter(i => i != Seperator.group);
+  last = last.split('');
   if (isZero(last)) { return; }
   let dot = last.indexOf(Seperator.decimal);
   if (dot >= 0) {
@@ -255,6 +255,9 @@ function formatNumber(num) {
 function calc(estimate = false) {
   const _exp = exp.slice();
   if (_exp[0] === Operator.MINUS) {
+    if (_exp.length === 1 || isZero(_exp[1].split(''))) {
+      return '0';
+    }
     _exp[1] = Operator.MINUS + _exp[1];
     _exp.shift();
   }
@@ -419,9 +422,6 @@ function divide(left, right, estimate) {
 
 function isZero(arr) {
   arr = arr.slice();
-  if (arr[0] === Operator.MINUS) {
-    arr.shift();
-  }
   trimZero(arr);
   return arr.length === 1 && arr[0] === '0';
 }
@@ -719,6 +719,8 @@ function fractionPadding(arr, length) {
 }
 
 function trimZero(arr) {
+  const isNegative = arr[0] === Operator.MINUS;
+  if (isNegative) { arr.shift(); }
   let dotIndex = arr.indexOf(Seperator.decimal);
   if (dotIndex < 0) { dotIndex = arr.length; }
   for (let i = 0; i < dotIndex; ++i) {
@@ -737,6 +739,12 @@ function trimZero(arr) {
   }
   if (arr.length === 3 && arr[0] === '0' && arr[1] === Seperator.decimal && arr[2] === '0') {
     arr.splice(1, 2);
+  }
+  if (arr[0] === '0') {
+    return arr;
+  }
+  if (isNegative) {
+    arr.unshift(Operator.MINUS);
   }
   return arr;
 }
