@@ -234,6 +234,9 @@ function addOperator(op) {
     }
   }
   if (exp.length === 0 && op === Operator.ADD) { return; }
+  if (exp[exp.length - 1] != null && !isOperator(exp[exp.length - 1])) {
+    exp[exp.length - 1] = trimZero([...exp[exp.length - 1]]).join('');
+  }
   exp.push(op);
   currentExp.textContent = formatExp();
 }
@@ -526,7 +529,7 @@ function substract(left, right, estimate) {
   const isRightNegative = r[0] === Operator.MINUS;
   if (isLeftNegative) {
     if (!isRightNegative) { r.unshift(Operator.MINUS); }
-    return plus(l, r, estimate);
+    return plus(l, r, estimate).join('');
   }
   let hasSwap = false;
   let compareRes = compare(l, r)
@@ -604,7 +607,7 @@ function plus(left, right, estimate) {
   const isLeftNegative = l[0] === Operator.MINUS;
   const isRightNegative = r[0] === Operator.MINUS;
   if (isLeftNegative && !isRightNegative) {
-    return substract(right, left, estimate);
+    return substract(right, left, estimate).join('');
   }
   if (isLeftNegative) { l.shift(); }
   if (isRightNegative) { r.shift(); }
@@ -740,7 +743,7 @@ function trimZero(arr) {
   if (arr.length === 3 && arr[0] === '0' && arr[1] === Seperator.decimal && arr[2] === '0') {
     arr.splice(1, 2);
   }
-  if (arr[0] === '0') {
+  if (arr.length === 1 && arr[0] === '0') {
     return arr;
   }
   if (isNegative) {
