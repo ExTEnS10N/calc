@@ -177,7 +177,7 @@ function getLastResult() {
 function addPercent() {
   let last = exp[exp.length - 1];
   if (isOperator(last)) { return; }
-  last = last.split('');
+  last = last.split('').filter(i => i != Seperator.group);
   if (isZero(last)) { return; }
   let dot = last.indexOf(Seperator.decimal);
   if (dot >= 0) {
