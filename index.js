@@ -7,6 +7,11 @@ const currentRes = document.querySelector('#current .result');
 const buttons = document.querySelectorAll('.keyboard td');
 const clearBtn = document.getElementById('btn-clear');
 const scrollView = document.querySelector('.history-scroll');
+const modalMask = document.querySelector('.modal-mask');
+const modal = document.querySelector('.modal');
+const modalClose = document.querySelector('.modal .close');
+const originEl = document.getElementById('origin');
+const hexEl = document.getElementById('hex');
 
 const Seperator = (() => {
   /** @type {{ type: string, value: string }[]} */
@@ -57,7 +62,7 @@ function scroll(top) {
 
 for (let i = 0; i < buttons.length; ++i) {
   buttons[i].addEventListener('click', function () {
-    input(this.textContent);
+    input(this.textContent.trim());
   })
 }
 const currentExpObserver = new MutationObserver(() => {
@@ -72,6 +77,13 @@ const currentExpObserver = new MutationObserver(() => {
   }
 });
 currentExpObserver.observe(currentExp, { characterData: true, childList: true });
+
+currentEL.addEventListener('click', showDetail);
+modalMask.addEventListener('click', toggleModal);
+modalClose.addEventListener('click', toggleModal);
+modal.addEventListener('click', (e) => {
+  e.stopPropagation();
+})
 
 /** @type {string[]} */
 let exp = [];
@@ -111,6 +123,7 @@ function input(char) {
       break;
     case '⌫':
       let last = exp.pop();
+      if (last == null) { break; }
       last = last.substring(0, last.length - 1);
       if (last.length > 0) {
         exp.push(last);
@@ -166,7 +179,24 @@ function createRow(expression, result) {
     <div class="expression">${expression}</div>
     <div class="result">${result}</div>
   `;
+  row.addEventListener('click', showDetail);
   return row;
+}
+
+function showDetail() {
+  const resEl = this.querySelector('.result');
+  originEl.textContent = resEl.textContent.substring(1).replace(new RegExp(Seperator.group, 'g'), '');
+  hexEl.textContent = toHex(originEl.textContent.replace(new RegExp(Seperator.group, 'g'), ''));
+  toggleModal();
+}
+
+function toggleModal() {
+  if (modalMask.classList.contains('hidden')) {
+    modalMask.classList.remove('hidden');
+  }
+  else {
+    modalMask.classList.add('hidden');
+  }
 }
 
 function getLastResult() {
@@ -314,6 +344,152 @@ function operate(left, op, right, estimate = false) {
       return multiply(left, right, estimate);
     case Operator.DIVIDE:
       return divide(left, right, estimate);
+  }
+}
+
+function toHex(decimal) {
+  let isNegative = decimal.startsWith(Operator.MINUS);
+  if (isNegative) { decimal = decimal.substring(1); }
+  let dot = decimal.indexOf(Seperator.decimal);
+  let quotient = [...(dot >= 0 ? decimal.substring(0, dot) : decimal)];
+  let fraction = [...(dot >= 0 ? '0' + decimal.substring(dot) : '0')];
+  const hexMap = '0123456789ABCDEF';
+  const remainders = [];
+  while (!isZero(quotient)) {
+    const res = modulo(quotient, '16');
+    quotient = res.quotient;
+    remainders.unshift(hexMap.charAt(Number(res.remainder)));
+  }
+
+  let fractionRemainders = [];
+  while (!isZero(fraction) && fractionRemainders.length < 16) {
+    const res = multiply(fraction, ['1', '6']);
+    const fracDot = res.indexOf(Seperator.decimal);
+    if (fracDot >= 0) {
+      fractionRemainders.push(hexMap.charAt(Number(res.slice(0, fracDot).join(''))));
+      fraction = ['0', ...res.slice(fracDot)];
+    }
+    else {
+      fractionRemainders.push(hexMap.charAt(Number(res)));
+      fraction = ['0'];
+    }
+  }
+
+  if (remainders.length === 0) { remainders.push('0'); }
+  let result = remainders.join('').replace(/(\d)(?=(?:\d{4})+$)/g, '$1 ');
+  if (fractionRemainders.length > 0) {
+    result += Seperator.decimal + fractionRemainders.join('').replace(/(.{4})/g, '$1 ');
+  }
+  if (isNegative) { result = Operator.MINUS + result; }
+  return result;
+}
+
+/** 暂不支持小数 */
+function modulo(left, right, estimate) {
+  let l = (left instanceof Array) ? left : [...left];
+  let r = (right instanceof Array) ? right : trimZero([...right]);
+
+  let quotient = [];
+  const isLeftNegative = l[0] === Operator.MINUS;
+  const isRightNegative = r[0] === Operator.MINUS;
+
+  if (isLeftNegative) { l.shift(); }
+  if (isRightNegative) { r.shift(); }
+
+  if (r.length === 1) {
+    if (r[0] === '1') {
+      quotient.push(...l);
+    }
+  }
+
+  if (isZero(r)) {
+    return ERROR + '不能除以0';
+  }
+  let remainder = '0';
+
+  if (quotient.length === 0) {
+    const dotL = l.indexOf(Seperator.decimal);
+    const dotR = r.indexOf(Seperator.decimal);
+    const fractionL = dotL >= 0 ? l.length - dotL - 1 : 0;
+    const fractionR = dotR >= 0 ? r.length - dotR - 1 : 0;
+
+    if (dotR >= 0) {
+      if (dotL >= 0) {
+        l.splice(dotL, 1);
+      }
+      r.splice(dotR, 1);
+      if (fractionL > fractionR) {
+        l.splice(dotL + fractionL - fractionR, 0, Seperator.decimal);
+      }
+      else if (fractionL < fractionR) {
+        l.push(...new Array(fractionR - fractionL).fill('0'));
+      }
+    }
+
+    trimZero(r);
+    trimZero(l);
+
+    let divisor = l.splice(0, r.length);
+    let hasFraction = false;
+    let fractionLength = 0;
+
+    while (divisor.length > 0) {
+      const distance = compare(divisor, r);
+      if (distance < 0) {
+        quotient.push('0');
+      }
+      else if (distance === 0) {
+        quotient.push('1');
+        divisor = [];
+      }
+      else {
+        let res = 0;
+        let substractor = divisor;
+        while (compare(substractor, r) >= 0) {
+          substractor = substract(substractor, r.slice(), estimate);
+          res++;
+        }
+        quotient.push(res + '');
+        if (substractor.length === 1 && substractor[0] === '0') {
+          divisor = [];
+        }
+        else {
+          divisor = substractor;
+        }
+      }
+
+      if (hasFraction) { fractionLength++; }
+
+      if (divisor.length === 1 && divisor[0] === '0') {
+        divisor = [];
+      }
+
+      if (l.length > 0) {
+        divisor.push(l.shift());
+      }
+      else if (divisor.length > 0) {
+        remainder = trimZero(divisor).join('');
+        divisor = [];
+      }
+      else {
+        remainder = '0';
+      }
+    }
+    if (fractionLength > maxFractionLength) {
+      const last = quotient.pop();
+      if (Number(last) >= 5) {
+        quotient = plus(quotient, ['0', Seperator.decimal, ...new Array(20).fill('0'), '1'], estimate);
+      }
+    }
+  }
+
+  if ((isLeftNegative || isRightNegative) && !(isLeftNegative && isRightNegative)) {
+    quotient.unshift(Operator.MINUS);
+  }
+  trimZero(quotient);
+  return {
+    quotient: quotient.join(''),
+    remainder
   }
 }
 
