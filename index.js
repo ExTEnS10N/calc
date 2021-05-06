@@ -67,10 +67,12 @@ for (let i = 0; i < buttons.length; ++i) {
     input(this.textContent.trim());
   })
 }
-let recoverScrollTop = 0;
+let recoverScrollTop = null;
 const currentExpObserver = new MutationObserver(() => {
   if (currentExp.textContent.length === 0 && !currentEL.classList.contains('empty')) {
-    scroll(recoverScrollTop);
+    if (recoverScrollTop !== null) {
+      scroll(recoverScrollTop);
+    }
     currentEL.classList.add('empty');
   }
   else if (currentEL.classList.contains('empty')) {
@@ -154,6 +156,7 @@ function input(char) {
         currentRes.textContent = res;
         currentRes.classList.add('error');
       }
+      recoverScrollTop = null;
       scroll(scrollView.scrollHeight);
       break;
     case Operator.ADD: case Operator.MINUS: case Operator.MULTIPLY: case Operator.DIVIDE:
@@ -190,7 +193,7 @@ function createRow(expression, result) {
 
 function showDetail() {
   const resEl = this.querySelector('.result');
-  if (resEl.textContent.startsWith(Error)) {
+  if (resEl.textContent.startsWith(ERROR)) {
     return;
   }
   originEl.textContent = resEl.textContent.substring(1);
