@@ -18,13 +18,8 @@
     --color-border-light: #1b1b1b;
   }
 }
-@font-face {
-  font-family: 'CustomSymbol';
-  src: local('Lucida Grande');
-  unicode-range: U+232b, U+f7, U+d7, U+2212, U+2b, U+3d, U+25;
-}
 html{
-  font-family: "CustomSymbol", "Source Code Pro", "PingFang SC", "Apple Symbols";
+  font-family: "Source Code Pro", "PingFang SC", "Apple Symbols";
   font-size: 17px;
 }
 body{
@@ -105,7 +100,7 @@ body{
   width: 100%;
   border-collapse: collapse;
   color: var(--color-fg-plain);
-  font-weight: 500;
+  font-weight: 400;
   font-size: 1.5em;
   -webkit-user-select: none;
   user-select: none;
@@ -139,4 +134,17 @@ body{
 }
 .keyboard td:last-child{
   border-right: none;
+}
+
+#btn-backspace{
+  font-size: 0;
+}
+.ionicon{
+  height: 26px;
+}
+.ionicon path{
+  stroke-width: 38;
+}
+.operator{
+  font-size: 32px;
 }
