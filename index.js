@@ -12,6 +12,8 @@ const modal = document.querySelector('.modal');
 const modalClose = document.querySelector('.modal .close');
 const originEl = document.getElementById('origin');
 const hexEl = document.getElementById('hex');
+const binaryEl = document.getElementById('binary');
+const octalEl = document.getElementById('octal');
 
 const Seperator = (() => {
   /** @type {{ type: string, value: string }[]} */
@@ -65,11 +67,14 @@ for (let i = 0; i < buttons.length; ++i) {
     input(this.textContent.trim());
   })
 }
+let recoverScrollTop = 0;
 const currentExpObserver = new MutationObserver(() => {
   if (currentExp.textContent.length === 0 && !currentEL.classList.contains('empty')) {
+    scroll(recoverScrollTop);
     currentEL.classList.add('empty');
   }
   else if (currentEL.classList.contains('empty')) {
+    recoverScrollTop = scrollView.scrollTop;
     requestAnimationFrame(() => {
       scroll(scrollView.scrollTop + currentEL.clientHeight);
     })
@@ -186,7 +191,16 @@ function createRow(expression, result) {
 function showDetail() {
   const resEl = this.querySelector('.result');
   originEl.textContent = resEl.textContent.substring(1).replace(new RegExp(Seperator.group, 'g'), '');
-  hexEl.textContent = toHex(originEl.textContent.replace(new RegExp(Seperator.group, 'g'), ''));
+  Promise.resolve().then(() => {
+    hexEl.textContent = toHex(originEl.textContent.replace(new RegExp(Seperator.group, 'g'), ''));
+    Promise.resolve().then(() => {
+      binaryEl.textContent = toBinary(hexEl.textContent);
+      Promise.resolve().then(() => {
+        octalEl.textContent = toOctal(binaryEl.textContent);
+      })
+    });
+  })
+
   toggleModal();
 }
 
@@ -382,6 +396,53 @@ function toHex(decimal) {
   }
   if (isNegative) { result = Operator.MINUS + result; }
   return result;
+}
+
+function toBinary(hex) {
+  const binary = [];
+  const binaryMap = { '0': '0000', '1': '0001', '2': '0010', '3': '0011', '4': '0100', '5': '0101', '6': '0110', '7': '0111', '8': '1000', '9': '1001', 'A': '1010', 'B': '1011', 'C': '1100', 'D': '1101', 'E': '1110', 'F': '1111' };
+  for (let i = 0; i < hex.length; ++i) {
+    const bin = binaryMap[hex.charAt(i)];
+    if (bin == null) {
+      if (hex.charAt(i) !== ' ') {
+        binary.push(hex.charAt(i))
+      }
+    }
+    else {
+      binary.push(bin);
+    }
+  }
+  return binary.join(' ').replace(Operator.MINUS + ' ', Operator.MINUS).replace(' ' + Seperator.decimal + ' ', Seperator.decimal);
+}
+
+function toOctal(binary) {
+  const octal = [];
+  let isNegative = binary.startsWith(Operator.MINUS);
+  const octalMap = { '000': '0', '001': '1', '010': '2', '011': '3', '100': '4', '101': '5', '110': '6', '111': '7' };
+  if (isNegative) {
+    binary = binary.substring(1);
+  }
+  binary = binary.replace(/\s/g, '');
+  const dot = binary.indexOf(Seperator.decimal);
+  const decimal = dot >= 0 ? binary.substring(0, dot) : binary;
+  const fraction = dot >= 0 ? binary.substring(dot + 1) : '';
+  octal.push(...decimal.replace(/(\d)(?=(?:\d{3})+$)/g, '$1 ').split(' ').map(d => {
+    d = '000'.substring(d.length) + d;
+    return octalMap[d]
+  }));
+  if (fraction.length > 0) {
+    octal.push(Seperator.decimal);
+    octal.push(...fraction.replace(/(\d{3})/g, '$1 ').split(' ').map(d => {
+      d += '000'.substring(d.length);
+      return octalMap[d];
+    }))
+  }
+
+  if (isNegative) {
+    octal.unshift(Operator.MINUS);
+  }
+  trimZero(octal);
+  return octal.join('');
 }
 
 /** 暂不支持小数 */
