@@ -79,9 +79,10 @@ body{
   padding: 16px;
   transition-duration: 250ms;
   transition-timing-function: ease-in-out;
-  transition-property: backdrop-filter;
+  transition-property: backdrop-filter, -webkit-backdrop-filter;
 }
 .calc-row:active{
+  -webkit-backdrop-filter: invert(0.1);
   backdrop-filter: invert(0.1);
 }
 .calc-row.empty{
@@ -168,17 +169,19 @@ body{
   width: 100vw;
   height: 100vh;
   background-color: var(--color-bg-alpha);
+  -webkit-backdrop-filter: opacity(1) blur(2px);
   backdrop-filter: opacity(1) blur(2px);
   display: flex;
   justify-content: center;
   align-items: flex-start;
   transition-duration: 250ms;
   transition-timing-function: ease-in-out;
-  transition-property: background-color, backdrop-filter;
+  transition-property: background-color, backdrop-filter, -webkit-backdrop-filter;
   overflow: hidden;
 }
 .modal-mask.hidden{
   background-color: var(--color-bg-transparent);
+  -webkit-backdrop-filter: opacity(0) blur(0);
   backdrop-filter: opacity(0) blur(0);
   pointer-events: none;
 }
