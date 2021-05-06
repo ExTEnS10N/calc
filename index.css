@@ -28,7 +28,9 @@ body{
   height: 100vh;
   overflow: hidden;
   position: relative;
-  background-color: var(--color-bg-plain)
+  background-color: var(--color-bg-plain);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizelegibility;
 }
 .container{
   width: 100%;
@@ -143,7 +145,7 @@ body{
   height: 26px;
 }
 .ionicon path{
-  stroke-width: 44;
+  stroke-width: 38;
 }
 .operator{
   font-size: 32px;
