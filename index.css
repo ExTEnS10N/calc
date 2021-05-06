@@ -100,7 +100,7 @@ body{
   width: 100%;
   border-collapse: collapse;
   color: var(--color-fg-plain);
-  font-weight: 400;
+  font-weight: 500;
   font-size: 1.5em;
   -webkit-user-select: none;
   user-select: none;
@@ -143,7 +143,7 @@ body{
   height: 26px;
 }
 .ionicon path{
-  stroke-width: 38;
+  stroke-width: 44;
 }
 .operator{
   font-size: 32px;
