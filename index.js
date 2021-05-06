@@ -190,7 +190,10 @@ function createRow(expression, result) {
 
 function showDetail() {
   const resEl = this.querySelector('.result');
-  originEl.textContent = resEl.textContent.substring(1).replace(new RegExp(Seperator.group, 'g'), '');
+  if (resEl.textContent.startsWith(Error)) {
+    return;
+  }
+  originEl.textContent = resEl.textContent.substring(1);
   Promise.resolve().then(() => {
     hexEl.textContent = toHex(originEl.textContent.replace(new RegExp(Seperator.group, 'g'), ''));
     Promise.resolve().then(() => {
