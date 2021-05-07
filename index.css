@@ -120,9 +120,9 @@ body{
 }
 .keyboard tr{
   min-height: 1em;
-  max-height: 64px;
-  height: 64px;
-  height: min(calc(22vw - 1px), 64px);
+  max-height: 88px;
+  height: 88px;
+  height: min(calc(22vw - 1px), 88px);
 }
 .keyboard td{
   background-color: var(--color-bg-plain);
