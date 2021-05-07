@@ -119,8 +119,9 @@ body{
 }
 .keyboard tr{
   min-height: 1em;
-  max-height: 100px;
-  height: calc(22vw - 1px);
+  max-height: 64px;
+  height: 64px;
+  height: min(calc(22vw - 1px), 64px);
 }
 .keyboard td{
   background-color: var(--color-bg-plain);
@@ -129,6 +130,7 @@ body{
   width: 25%;
   padding: 0;
   cursor: pointer;
+  max-height: 64px;
 }
 .keyboard td:hover{
   filter: brightness(.98);
