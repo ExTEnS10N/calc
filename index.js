@@ -727,7 +727,7 @@ function multiply(left, right, estimate) {
     for (let i = l.length - 1; i >= 0; --i) {
       const l1 = l[i];
       let product = Number(l1) * Number(r1) + carry;
-      if (product > 10) {
+      if (product >= 10) {
         const p = product + '';
         carry = Number(p.substring(0, p.length - 1));
         product = Number(p.substring(p.length - 1));
