@@ -643,7 +643,13 @@ function divide(left, right, estimate) {
       }
 
       if (l.length > 0) {
-        divisor.push(l.shift());
+        let nextNum = l.shift();
+        if (nextNum === Seperator.decimal) {
+          result.push(nextNum);
+          nextNum = l.shift();
+          hasFraction = true;
+        }
+        divisor.push(nextNum);
       }
       else if (divisor.length > 0) {
         if (fractionLength === 0) {
