@@ -649,12 +649,26 @@ function divide(left, right, estimate) {
           nextNum = l.shift();
           hasFraction = true;
         }
+        else if (!hasFraction && divisor.indexOf(Seperator.decimal) >= 0) {
+          let existedDecimal = divisor.indexOf(Seperator.decimal);
+          fractionLength = divisor.length - existedDecimal - 1;
+          divisor.splice(existedDecimal, 1);
+          result.push(Seperator.decimal);
+          result.push(...new Array(fractionLength).fill("0"));
+          hasFraction = true;
+        }
         divisor.push(nextNum);
       }
       else if (divisor.length > 0) {
         if (fractionLength === 0) {
           result.push(Seperator.decimal);
           hasFraction = true;
+          let existedDecimal = divisor.indexOf(Seperator.decimal);
+          if(existedDecimal >= 0){
+            fractionLength = divisor.length - existedDecimal - 1;
+            divisor.splice(existedDecimal, 1);
+            result.push(...new Array(fractionLength).fill("0"));
+          }
         }
         divisor.push('0');
       }
@@ -666,8 +680,6 @@ function divide(left, right, estimate) {
       }
     }
   }
-
-
 
   if ((isLeftNegative || isRightNegative) && !(isLeftNegative && isRightNegative)) {
     result.unshift(Operator.MINUS);
